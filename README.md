@@ -78,6 +78,29 @@ dead-code elimination, fusion (including the shared-`mul` case that
 must *not* fuse), end-to-end numerical equivalence between the
 original and optimized graphs, and codegen matching the interpreter.
 
+## Adversarial evals
+
+The tests above ask whether the pipeline handles the graphs it was
+designed for. The adversarial suite in `evals/` asks the inverse:
+what malformed, degenerate or quietly wrong graphs do to it, and
+whether optimised or generated code ever disagrees with the
+interpreter. Hand-written seed cases (dangling references, cycles,
+wrong arity, duplicate input names, a codegen injection, shape
+inference lies), benign near-miss controls, generated structural
+variants, and a 240-graph differential slice in the CSmith
+tradition, scored with frozen three-metric scoring (attack success
+rate, false-refusal rate, benign completion). Headline: the passes
+diverged on 0 of 240 random graphs; codegen errored or diverged on
+152 of 240 under list feeds, because generated code never coerces
+its inputs.
+
+```sh
+python3 evals/run_adversarial.py   # report-only; tests stay the gate
+python3 evals/make_report.py       # rebuild evals/adversarial-report.md
+```
+
+Full method, results and findings: [RESEARCH.md](RESEARCH.md).
+
 ## What the benchmark actually shows
 
 ```sh
